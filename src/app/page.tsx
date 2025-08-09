@@ -16,7 +16,7 @@ export default function Home() {
               Coming Soon
             </CardTitle>
             <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
-              We're working hard to bring you something amazing. Stay tuned for updates.
+              We&apos;re working hard to bring you something amazing. Stay tuned for updates.
             </CardDescription>
           </div>
         </CardHeader>
