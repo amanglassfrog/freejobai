@@ -1,6 +1,6 @@
-# Hello World - Next.js with shadcn/ui
+# Coming Soon Page
 
-A beautiful landing page built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+A professional "Coming Soon" landing page built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Features
 
@@ -10,6 +10,8 @@ A beautiful landing page built with Next.js, TypeScript, Tailwind CSS, and shadc
 - 🎨 Tailwind CSS
 - 🌙 Dark mode support
 - 📱 Responsive design
+- 🎨 Professional grey color scheme
+- 📧 Email notification signup
 
 ## Getting Started
 
@@ -45,10 +47,21 @@ src/
 ├── components/
 │   └── ui/
 │       ├── button.tsx
-│       └── card.tsx
+│       ├── card.tsx
+│       ├── input.tsx
+│       └── badge.tsx
 └── lib/
     └── utils.ts
 ```
+
+## Design Features
+
+- Clean, professional grey color scheme
+- Modern card-based layout
+- Email signup functionality
+- Responsive design
+- Dark mode support
+- Accessible components
 
 ## Learn More
 

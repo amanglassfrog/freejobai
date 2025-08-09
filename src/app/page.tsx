@@ -1,32 +1,50 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-2xl font-bold text-white">H</span>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-lg shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <CardHeader className="text-center space-y-6">
+          <div className="mx-auto w-20 h-20 bg-gray-800 dark:bg-gray-200 rounded-full flex items-center justify-center shadow-md">
+            <span className="text-3xl font-bold text-white dark:text-gray-800">CS</span>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Hello World
-          </CardTitle>
-          <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
-            Welcome to your Next.js application with shadcn/ui
-          </CardDescription>
+          <div className="space-y-2">
+            <CardTitle className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+              Coming Soon
+            </CardTitle>
+            <CardDescription className="text-lg text-gray-600 dark:text-gray-300">
+              We're working hard to bring you something amazing. Stay tuned for updates.
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui
+        <CardContent className="space-y-6">
+          <div className="text-center">
+            <Badge variant="secondary" className="text-sm font-medium">
+              Under Development
+            </Badge>
           </div>
-          <div className="flex gap-2">
-            <Button className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">
-              Get Started
-            </Button>
-            <Button variant="outline" className="flex-1">
-              Learn More
-            </Button>
+          
+          <div className="space-y-4">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+              Be the first to know when we launch
+            </div>
+            <div className="flex gap-2">
+              <Input 
+                type="email" 
+                placeholder="Enter your email address" 
+                className="flex-1"
+              />
+              <Button className="bg-gray-800 hover:bg-gray-700 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-300">
+                Notify Me
+              </Button>
+            </div>
+          </div>
+          
+          <div className="text-center text-xs text-gray-400 dark:text-gray-500">
+            © 2025. All rights reserved.
           </div>
         </CardContent>
       </Card>

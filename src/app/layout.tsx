@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hello World - Next.js with shadcn/ui",
-  description: "A beautiful landing page built with Next.js and shadcn/ui",
+  title: "Coming Soon",
+  description: "We're working hard to bring you something amazing. Stay tuned for updates.",
 };
 
 export default function RootLayout({
