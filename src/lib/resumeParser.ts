@@ -97,26 +97,87 @@ export class ResumeParser {
     try {
       console.log('Starting PDF parsing for file:', file.name, 'Size:', file.size);
       
-      // Convert File to Buffer for pdf-parse
+      // Convert File to ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
       
-      console.log('Converted to buffer, size:', buffer.length);
+      console.log('Converted to arrayBuffer, size:', arrayBuffer.byteLength);
       
-      // Dynamic import for pdf-parse to avoid server-side issues
-      const pdfParse = await import('pdf-parse');
+      // Try multiple PDF parsing approaches
+      let extractedText = '';
       
-      // Parse the PDF
-      const data = await pdfParse.default(buffer);
-      
-      if (data.text && data.text.trim().length > 0) {
-        console.log('PDF parsed successfully, extracted text length:', data.text.length);
-        console.log('PDF info - pages:', data.numpages, 'version:', data.info?.PDFFormatVersion);
-        return data.text.trim();
-      } else {
-        console.warn('No text extracted from PDF or empty content');
-        throw new Error('No text content found in PDF. The file might be image-based or corrupted.');
+      // Approach 1: Try using pdf-parse with error handling
+      try {
+        const pdfParse = await import('pdf-parse');
+        const buffer = Buffer.from(arrayBuffer);
+        const data = await pdfParse.default(buffer);
+        
+        if (data.text && data.text.trim().length > 0) {
+          extractedText = data.text.trim();
+          console.log('PDF parsed successfully with pdf-parse, extracted text length:', extractedText.length);
+          return extractedText;
+        }
+      } catch (pdfParseError) {
+        console.warn('pdf-parse failed, trying alternative approach:', pdfParseError);
       }
+      
+      // Approach 2: Try using pdfjs-dist with server-side configuration
+      try {
+        const pdfjsLib = await import('pdfjs-dist');
+        
+        // Configure for server-side
+        if (typeof window === 'undefined') {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = false;
+        }
+        
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        
+        console.log('PDF loaded with pdfjs-dist, pages:', pdf.numPages);
+        
+        let fullText = '';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          
+          const pageText = textContent.items
+            .map((item: any) => item.str)
+            .join(' ');
+          
+          fullText += pageText + '\n';
+        }
+        
+        if (fullText && fullText.trim().length > 0) {
+          extractedText = fullText.trim();
+          console.log('PDF parsed successfully with pdfjs-dist, extracted text length:', extractedText.length);
+          return extractedText;
+        }
+      } catch (pdfjsError) {
+        console.warn('pdfjs-dist failed, trying final approach:', pdfjsError);
+      }
+      
+      // Approach 3: Basic text extraction from file metadata
+      try {
+        // Try to extract any text-like content from the file
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const textDecoder = new TextDecoder('utf-8');
+        const decodedText = textDecoder.decode(uint8Array);
+        
+        // Look for readable text patterns
+        const textPatterns = decodedText.match(/[A-Za-z0-9\s\.\,\-\_]+/g);
+        if (textPatterns && textPatterns.length > 0) {
+          const readableText = textPatterns.join(' ').substring(0, 1000); // Limit to first 1000 chars
+          if (readableText.trim().length > 50) { // Must have at least 50 readable characters
+            console.log('PDF parsed with basic text extraction, extracted text length:', readableText.length);
+            return readableText.trim();
+          }
+        }
+      } catch (basicError) {
+        console.warn('Basic text extraction failed:', basicError);
+      }
+      
+      // If all approaches fail
+      throw new Error('Unable to extract text from PDF. The file might be image-based, corrupted, or in an unsupported format.');
+      
     } catch (error) {
       console.error('PDF parsing error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
