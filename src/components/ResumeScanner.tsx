@@ -94,7 +94,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
                    style={{transform: `rotate(${llmAnalysis.overall.score * 3.6}deg)`}}></div>
             </div>
             <div>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
+              <p className="font-medium text-gray-900 dark:text-gray-400">
                 {llmAnalysis.overall.score >= 80 ? 'Excellent' : 
                  llmAnalysis.overall.score >= 60 ? 'Good' : 
                  llmAnalysis.overall.score >= 40 ? 'Fair' : 'Needs Improvement'}
@@ -120,7 +120,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Technical Skills</h4>
+            <h4 className="font-medium text-gray-900 dark:text-gray-400 mb-2">Technical Skills</h4>
             <div className="flex flex-wrap gap-2">
               {llmAnalysis.skills.technical.length > 0 ? (
                 llmAnalysis.skills.technical.map((skill, index) => (
@@ -135,7 +135,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
           </div>
           
           <div>
-            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Soft Skills</h4>
+            <h4 className="font-medium text-gray-900 dark:text-gray-400 mb-2">Soft Skills</h4>
             <div className="flex flex-wrap gap-2">
               {llmAnalysis.skills.soft.length > 0 ? (
                 llmAnalysis.skills.soft.map((skill, index) => (
@@ -151,7 +151,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
           {llmAnalysis.skills.missing.length > 0 && (
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Missing Skills</h4>
+              <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Missing Skills</h4>
               <div className="flex flex-wrap gap-2">
                 {llmAnalysis.skills.missing.map((skill, index) => (
                   <Badge key={index} variant="outline" className="border-red-300 text-red-700 dark:border-red-700 dark:text-red-300">
@@ -164,7 +164,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
           {llmAnalysis.skills.recommendations.length > 0 && (
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Skill Recommendations</h4>
+              <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Skill Recommendations</h4>
               <ul className="space-y-1">
                 {llmAnalysis.skills.recommendations.map((rec, index) => (
                   <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -187,13 +187,13 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Summary</h4>
+              <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Summary</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.experience.summary}</p>
             </div>
             
             {llmAnalysis.experience.strengths.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Strengths</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Strengths</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.experience.strengths.map((strength, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -207,7 +207,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.experience.weaknesses.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Areas for Improvement</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Areas for Improvement</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.experience.weaknesses.map((weakness, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -221,7 +221,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.experience.suggestions.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Experience Suggestions</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Experience Suggestions</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.experience.suggestions.map((suggestion, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -245,18 +245,18 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Analysis</h4>
+              <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Analysis</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.education.analysis}</p>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Relevance to Target Role</h4>
+              <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Relevance to Target Role</h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.education.relevance}</p>
             </div>
 
             {llmAnalysis.education.suggestions.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Education Suggestions</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Education Suggestions</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.education.suggestions.map((suggestion, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -281,7 +281,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
           <CardContent className="space-y-4">
             {llmAnalysis.achievements.identified.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Identified Achievements</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Identified Achievements</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.achievements.identified.map((achievement, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -295,7 +295,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.achievements.missed.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Potential Achievements to Highlight</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Potential Achievements to Highlight</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.achievements.missed.map((achievement, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -309,7 +309,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.achievements.impact && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Overall Impact Assessment</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Overall Impact Assessment</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.achievements.impact}</p>
               </div>
             )}
@@ -327,7 +327,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
           <CardContent className="space-y-4">
             {llmAnalysis.gaps.skillGaps.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Skill Gaps</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Skill Gaps</h4>
                 <div className="space-y-2">
                   {llmAnalysis.gaps.skillGaps.map((gap, index) => (
                     <div key={index} className="p-3 border rounded-md">
@@ -346,7 +346,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.gaps.experienceGaps.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Experience Gaps</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Experience Gaps</h4>
                 <div className="space-y-2">
                   {llmAnalysis.gaps.experienceGaps.map((gap, index) => (
                     <div key={index} className="p-3 border rounded-md">
@@ -366,7 +366,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.gaps.educationGaps.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Education Gaps</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Education Gaps</h4>
                 <div className="space-y-2">
                   {llmAnalysis.gaps.educationGaps.map((gap, index) => (
                     <div key={index} className="p-3 border rounded-md">
@@ -398,7 +398,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
             <div className="space-y-4">
               {llmAnalysis.overall.strengths.length > 0 && (
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Key Strengths</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Key Strengths</h4>
                   <ul className="space-y-1">
                     {llmAnalysis.overall.strengths.map((strength, index) => (
                       <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -412,7 +412,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
               {llmAnalysis.overall.weaknesses.length > 0 && (
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Areas to Address</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Areas to Address</h4>
                   <ul className="space-y-1">
                     {llmAnalysis.overall.weaknesses.map((weakness, index) => (
                       <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -426,7 +426,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
               {llmAnalysis.overall.recommendations.length > 0 && (
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Priority Actions</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-400mb-2">Priority Actions</h4>
                   <ul className="space-y-1">
                     {llmAnalysis.overall.recommendations.map((rec, index) => (
                       <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">

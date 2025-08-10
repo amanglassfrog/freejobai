@@ -76,23 +76,23 @@ export default function ResumeScannerPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 text-black dark:text-blue-500">
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Dashboard</span>
                 </Button>
               </Link>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Resume Intelligence Scanner
+                Resume AI Scanner
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-gray-600 dark:text-blue-500">
                 Welcome, {user.name}
               </span>
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="text-gray-700 dark:text-gray-300"
+                className="text-black dark:text-blue-500"
               >
                 Logout
               </Button>

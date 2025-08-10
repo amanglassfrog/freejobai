@@ -155,14 +155,14 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Link href="/dashboard/resume-scanner">
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start mb-2" variant="outline">
                   📄 Resume Scanner
                 </Button>
               </Link>
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start mb-2" variant="outline">
                 Edit Profile
               </Button>
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start mb-2" variant="outline">
                 Change Password
               </Button>
             </CardContent>
