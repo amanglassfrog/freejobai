@@ -37,45 +37,59 @@ export interface GapAnalysis {
 
 export class ResumeParser {
   private static skillKeywords = [
-    'javascript', 'python', 'java', 'react', 'node.js', 'sql', 'mongodb',
-    'aws', 'docker', 'kubernetes', 'git', 'agile', 'scrum', 'typescript',
-    'html', 'css', 'angular', 'vue.js', 'php', 'ruby', 'go', 'rust',
-    'machine learning', 'ai', 'data science', 'tableau', 'power bi'
+    'JavaScript', 'Python', 'Java', 'React', 'Node.js', 'SQL', 'MongoDB',
+    'AWS', 'Docker', 'Kubernetes', 'Git', 'TypeScript', 'Angular', 'Vue.js',
+    'Machine Learning', 'AI', 'Data Analysis', 'Project Management', 'Leadership'
   ];
 
   static async parseFile(file: File, targetRole?: string): Promise<ParsedResume> {
     const fileType = file.name.toLowerCase();
     let text = '';
 
-    console.log('Processing file:', file.name, 'Type:', file.type);
+    console.log('Processing file:', file.name, 'Type:', file.type, 'Size:', file.size);
 
-    if (fileType.endsWith('.pdf')) {
-      text = await this.parsePDF(file);
-    } else if (fileType.endsWith('.docx')) {
-      text = await this.parseDOCX(file);
-    } else if (fileType.endsWith('.txt')) {
-      text = await this.parseTXT(file);
-    } else {
-      throw new Error('Unsupported file format. Please upload PDF, DOCX, or TXT files.');
-    }
-
-    console.log('Extracted text length:', text.length);
-
-    // Get basic analysis
-    const basicAnalysis = this.analyzeResume(text);
-    
-    // Enhance with LLM analysis if available
     try {
-      console.log('Attempting LLM analysis...');
-      const llmAnalysis = await LLMAnalyzer.analyzeResume(text, targetRole);
-      console.log('LLM analysis completed successfully');
-      return {
-        ...basicAnalysis,
-        llmAnalysis
-      };
+      if (fileType.endsWith('.pdf')) {
+        text = await this.parsePDF(file);
+      } else if (fileType.endsWith('.docx')) {
+        text = await this.parseDOCX(file);
+      } else if (fileType.endsWith('.txt')) {
+        text = await this.parseTXT(file);
+      } else {
+        throw new Error('Unsupported file format. Please upload PDF, DOCX, or TXT files.');
+      }
+
+      console.log('Extracted text length:', text.length);
+      console.log('First 200 characters of extracted text:', text.substring(0, 200));
+
+      if (!text || text.trim().length === 0) {
+        throw new Error('No text content could be extracted from the file. Please ensure the file contains readable text.');
+      }
+
+      // Get basic analysis
+      const basicAnalysis = this.analyzeResume(text);
+      console.log('Basic analysis completed:', {
+        skillsCount: basicAnalysis.skills.length,
+        experienceCount: basicAnalysis.experience.length,
+        educationCount: basicAnalysis.education.length
+      });
+      
+      // Enhance with LLM analysis if available
+      try {
+        console.log('Attempting LLM analysis with target role:', targetRole || 'general');
+        const llmAnalysis = await LLMAnalyzer.analyzeResume(text, targetRole);
+        console.log('LLM analysis completed successfully');
+        return {
+          ...basicAnalysis,
+          llmAnalysis
+        };
+      } catch (error) {
+        console.warn('LLM analysis failed, using basic analysis only:', error);
+        return basicAnalysis;
+      }
     } catch (error) {
-      console.warn('LLM analysis failed, using basic analysis only:', error);
-      return basicAnalysis;
+      console.error('Resume parsing failed:', error);
+      throw error;
     }
   }
 
@@ -98,25 +112,47 @@ export class ResumeParser {
         return data.text;
       } else {
         console.warn('No text extracted from PDF or empty content');
-        return `PDF content from ${file.name} - No text content found or empty document.`;
+        throw new Error('No text content found in PDF. The file might be image-based or corrupted.');
       }
     } catch (error) {
       console.error('PDF parsing error:', error);
-      // Fallback: return a more informative placeholder
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('PDF parsing failed:', errorMessage);
-      return `PDF content from ${file.name} - PDF parsing encountered an error: ${errorMessage}`;
+      throw new Error(`PDF parsing failed: ${errorMessage}. Please ensure the PDF contains readable text and is not corrupted.`);
     }
   }
 
   private static async parseDOCX(file: File): Promise<string> {
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    return result.value;
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      
+      if (result.value && result.value.trim().length > 0) {
+        console.log('DOCX parsed successfully, extracted text length:', result.value.length);
+        return result.value;
+      } else {
+        throw new Error('No text content found in DOCX file.');
+      }
+    } catch (error) {
+      console.error('DOCX parsing error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`DOCX parsing failed: ${errorMessage}`);
+    }
   }
 
   private static async parseTXT(file: File): Promise<string> {
-    return await file.text();
+    try {
+      const text = await file.text();
+      if (text && text.trim().length > 0) {
+        console.log('TXT parsed successfully, extracted text length:', text.length);
+        return text;
+      } else {
+        throw new Error('No text content found in TXT file.');
+      }
+    } catch (error) {
+      console.error('TXT parsing error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`TXT parsing failed: ${errorMessage}`);
+    }
   }
 
   private static analyzeResume(text: string): ParsedResume {

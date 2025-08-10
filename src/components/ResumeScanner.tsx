@@ -102,6 +102,11 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Industry Fit: {llmAnalysis.overall.industryFit}
               </p>
+              {llmAnalysis.overall.jobFit && (
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Job Fit: {llmAnalysis.overall.jobFit}
+                </p>
+              )}
             </div>
           </div>
         </CardContent>
@@ -206,7 +211,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
                 <ul className="space-y-1">
                   {llmAnalysis.experience.weaknesses.map((weakness, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
-                      <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                      <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
                       {weakness}
                     </li>
                   ))}
@@ -216,7 +221,7 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
             {llmAnalysis.experience.suggestions.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Suggestions</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Experience Suggestions</h4>
                 <ul className="space-y-1">
                   {llmAnalysis.experience.suggestions.map((suggestion, index) => (
                     <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
@@ -231,12 +236,93 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
         </Card>
       )}
 
-      {/* Enhanced Gaps Analysis */}
-      {(llmAnalysis.gaps.skillGaps.length > 0 || llmAnalysis.gaps.experienceGaps.length > 0 || llmAnalysis.gaps.educationGaps.length > 0) && (
+      {/* Education Analysis */}
+      {llmAnalysis.education && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Education Analysis</CardTitle>
+            <CardDescription>Assessment of your educational background</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Analysis</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.education.analysis}</p>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Relevance to Target Role</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.education.relevance}</p>
+            </div>
+
+            {llmAnalysis.education.suggestions.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Education Suggestions</h4>
+                <ul className="space-y-1">
+                  {llmAnalysis.education.suggestions.map((suggestion, index) => (
+                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Achievements Analysis */}
+      {llmAnalysis.achievements && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Achievements Analysis</CardTitle>
+            <CardDescription>Assessment of your accomplishments</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {llmAnalysis.achievements.identified.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Identified Achievements</h4>
+                <ul className="space-y-1">
+                  {llmAnalysis.achievements.identified.map((achievement, index) => (
+                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                      {achievement}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {llmAnalysis.achievements.missed.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Potential Achievements to Highlight</h4>
+                <ul className="space-y-1">
+                  {llmAnalysis.achievements.missed.map((achievement, index) => (
+                    <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                      <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                      {achievement}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {llmAnalysis.achievements.impact && (
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Overall Impact Assessment</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{llmAnalysis.achievements.impact}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Gap Analysis */}
+      {llmAnalysis.gaps && (
         <Card>
           <CardHeader>
             <CardTitle>Gap Analysis</CardTitle>
-            <CardDescription>Comprehensive assessment of potential gaps</CardDescription>
+            <CardDescription>Areas where your resume could be strengthened</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {llmAnalysis.gaps.skillGaps.length > 0 && (
@@ -244,10 +330,12 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Skill Gaps</h4>
                 <div className="space-y-2">
                   {llmAnalysis.gaps.skillGaps.map((gap, index) => (
-                    <div key={index} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
+                    <div key={index} className="p-3 border rounded-md">
+                      <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-gray-900 dark:text-gray-100">{gap.skill}</span>
-                        <Badge className={getSeverityColor(gap.severity)}>{gap.severity}</Badge>
+                        <Badge className={getSeverityColor(gap.severity)}>
+                          {gap.severity.toUpperCase()}
+                        </Badge>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{gap.reason}</p>
                     </div>
@@ -261,12 +349,35 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
                 <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Experience Gaps</h4>
                 <div className="space-y-2">
                   {llmAnalysis.gaps.experienceGaps.map((gap, index) => (
-                    <div key={index} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-gray-900 dark:text-gray-100">{gap.gap}</span>
-                        <Badge className={getSeverityColor(gap.severity)}>{gap.severity}</Badge>
+                    <div key={index} className="p-3 border rounded-md">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">Experience Gap</span>
+                        <Badge className={getSeverityColor(gap.severity)}>
+                          {gap.severity.toUpperCase()}
+                        </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{gap.suggestion}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{gap.gap}</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">{gap.suggestion}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {llmAnalysis.gaps.educationGaps.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Education Gaps</h4>
+                <div className="space-y-2">
+                  {llmAnalysis.gaps.educationGaps.map((gap, index) => (
+                    <div key={index} className="p-3 border rounded-md">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">Education Gap</span>
+                        <Badge className={getSeverityColor(gap.severity)}>
+                          {gap.severity.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{gap.gap}</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">{gap.suggestion}</p>
                     </div>
                   ))}
                 </div>
@@ -277,21 +388,56 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
       )}
 
       {/* Overall Recommendations */}
-      {llmAnalysis.overall.recommendations.length > 0 && (
+      {llmAnalysis.overall && (
         <Card>
           <CardHeader>
             <CardTitle>Overall Recommendations</CardTitle>
-            <CardDescription>Key suggestions for improvement</CardDescription>
+            <CardDescription>Key actions to improve your resume</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {llmAnalysis.overall.recommendations.map((rec, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{rec}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-4">
+              {llmAnalysis.overall.strengths.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Key Strengths</h4>
+                  <ul className="space-y-1">
+                    {llmAnalysis.overall.strengths.map((strength, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        {strength}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {llmAnalysis.overall.weaknesses.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Areas to Address</h4>
+                  <ul className="space-y-1">
+                    {llmAnalysis.overall.weaknesses.map((weakness, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                        <span className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        {weakness}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {llmAnalysis.overall.recommendations.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Priority Actions</h4>
+                  <ul className="space-y-1">
+                    {llmAnalysis.overall.recommendations.map((rec, index) => (
+                      <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-start">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        {rec}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       )}
@@ -300,52 +446,50 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
 
   return (
     <div className="space-y-6">
-      {/* File Upload Section */}
+      {/* Upload Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Resume Intelligence Scanner</CardTitle>
+          <CardTitle>Resume Analysis</CardTitle>
           <CardDescription>
-            Upload your resume (PDF, DOCX, or TXT) to get AI-powered analysis and insights.
+            Upload your resume to get AI-powered insights and recommendations for your target role
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
-              <input
-                type="file"
-                accept=".pdf,.docx,.txt"
-                onChange={handleFileChange}
-                className="hidden"
-                id="resume-upload"
-              />
-              <label htmlFor="resume-upload" className="cursor-pointer">
-                <div className="space-y-2">
-                  <div className="text-4xl">📄</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    {file ? file.name : 'Click to upload resume (PDF, DOCX, TXT)'}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-500">
-                    Max file size: 10MB
-                  </div>
-                </div>
-              </label>
-            </div>
-
-            {/* Target Role Input */}
             <div>
-              <label htmlFor="targetRole" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Target Role (Optional)
+              <label htmlFor="targetRole" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Target Role (Optional but Recommended)
               </label>
               <Input
                 id="targetRole"
                 type="text"
-                placeholder="e.g., Senior Software Engineer, Product Manager"
+                placeholder="e.g., Senior Software Engineer, Product Manager, Data Scientist"
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
-                className="mt-1"
+                className="w-full"
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Adding a target role helps provide more specific and relevant analysis
+              </p>
             </div>
-            
+
+            <div>
+              <label htmlFor="resumeFile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Resume File
+              </label>
+              <Input
+                id="resumeFile"
+                type="file"
+                accept=".pdf,.docx,.txt"
+                onChange={handleFileChange}
+                className="w-full"
+                required
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Supported formats: PDF, DOCX, TXT (Max 10MB)
+              </p>
+            </div>
+
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
                 <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
@@ -355,9 +499,16 @@ export default function ResumeScanner({ onAnalysisComplete }: ResumeScannerProps
             <Button
               type="submit"
               disabled={!file || loading}
-              className="w-full bg-gray-800 hover:bg-gray-700 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-gray-300"
+              className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
             >
-              {loading ? 'Analyzing with AI...' : 'Analyze Resume'}
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Analyzing with AI...</span>
+                </div>
+              ) : (
+                'Analyze Resume'
+              )}
             </Button>
           </form>
         </CardContent>
