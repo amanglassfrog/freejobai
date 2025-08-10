@@ -7,19 +7,71 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Starting login process...');
-    
+    console.log('=== LOGIN PROCESS STARTED ===');
+    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
+    console.log('Request method:', request.method);
+    console.log('Request URL:', request.url);
+
+    // Check environment variables first
+    console.log('Environment check:');
+    console.log('- NODE_ENV:', process.env.NODE_ENV);
+    console.log('- MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('- JWT_SECRET exists:', !!process.env.JWT_SECRET);
+
+    if (!process.env.MONGODB_URI) {
+      console.error('CRITICAL: MONGODB_URI environment variable is missing');
+      return NextResponse.json(
+        { error: 'Server configuration error: Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET environment variable is missing');
+      return NextResponse.json(
+        { error: 'Server configuration error: Authentication not configured' },
+        { status: 500 }
+      );
+    }
+
     // Connect to MongoDB
-    console.log('Connecting to MongoDB...');
-    await connectDB();
-    console.log('MongoDB connected successfully for login');
-    
-    const { email, password } = await request.json();
-    console.log('Received login data:', { email });
+    console.log('Attempting MongoDB connection...');
+    try {
+      await connectDB();
+      console.log('MongoDB connected successfully for login');
+    } catch (dbError) {
+      console.error('MongoDB connection failed:', dbError);
+      return NextResponse.json(
+        { error: 'Database connection failed. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
+    // Parse request body
+    let requestBody;
+    try {
+      requestBody = await request.json();
+      console.log('Request body parsed successfully');
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request format. Please check your input.' },
+        { status: 400 }
+      );
+    }
+
+    const { email, password } = requestBody;
+    console.log('Extracted data:', { 
+      email: email ? `${email.substring(0, 3)}***` : 'missing',
+      passwordLength: password ? password.length : 'missing'
+    });
 
     // Validate input
     if (!email || !password) {
-      console.log('Validation failed:', { email: !!email, password: !!password });
+      console.log('Validation failed:', { 
+        email: !!email, 
+        password: !!password 
+      });
       return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
@@ -28,7 +80,18 @@ export async function POST(request: NextRequest) {
 
     // Find user by email
     console.log('Looking up user...');
-    const user = await User.findOne({ email });
+    let user;
+    try {
+      user = await User.findOne({ email });
+      console.log('User lookup completed');
+    } catch (lookupError) {
+      console.error('User lookup failed:', lookupError);
+      return NextResponse.json(
+        { error: 'Database query failed. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     if (!user) {
       console.log('User not found:', email);
       return NextResponse.json(
@@ -39,7 +102,18 @@ export async function POST(request: NextRequest) {
 
     // Check password
     console.log('Verifying password...');
-    const isPasswordValid = await user.comparePassword(password);
+    let isPasswordValid;
+    try {
+      isPasswordValid = await user.comparePassword(password);
+      console.log('Password verification completed');
+    } catch (passwordError) {
+      console.error('Password verification failed:', passwordError);
+      return NextResponse.json(
+        { error: 'Authentication service error. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     if (!isPasswordValid) {
       console.log('Invalid password for user:', email);
       return NextResponse.json(
@@ -50,11 +124,21 @@ export async function POST(request: NextRequest) {
 
     // Generate JWT token
     console.log('Generating JWT token...');
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    let token;
+    try {
+      token = jwt.sign(
+        { userId: user._id, email: user.email },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+      console.log('JWT token generated successfully');
+    } catch (jwtError) {
+      console.error('JWT generation failed:', jwtError);
+      return NextResponse.json(
+        { error: 'Authentication service error. Please try again later.' },
+        { status: 500 }
+      );
+    }
 
     // Remove password from response
     const userResponse = {
@@ -71,20 +155,34 @@ export async function POST(request: NextRequest) {
     );
 
     // Set JWT token as HTTP-only cookie
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-    });
+    try {
+      response.cookies.set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+      });
+      console.log('JWT cookie set successfully');
+    } catch (cookieError) {
+      console.error('Failed to set JWT cookie:', cookieError);
+      return NextResponse.json(
+        { error: 'Authentication service error. Please try again later.' },
+        { status: 500 }
+      );
+    }
 
-    console.log('Login completed successfully for user:', email);
+    console.log('=== LOGIN PROCESS COMPLETED SUCCESSFULLY ===');
     return response;
   } catch (error: unknown) {
-    console.error('Login error:', error);
+    console.error('=== LOGIN PROCESS FAILED ===');
+    console.error('Unexpected error:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error constructor:', error?.constructor?.name);
     
-    // Provide more specific error messages
     if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       if (error.message.includes('MongoDB')) {
         return NextResponse.json(
           { error: 'Database connection failed. Please try again later.' },
@@ -98,7 +196,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error. Please try again later.' },
       { status: 500 }

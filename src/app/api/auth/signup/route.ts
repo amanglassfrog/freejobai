@@ -4,19 +4,74 @@ import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Starting signup process...');
-    
+    console.log('=== SIGNUP PROCESS STARTED ===');
+    console.log('Request headers:', Object.fromEntries(request.headers.entries()));
+    console.log('Request method:', request.method);
+    console.log('Request URL:', request.url);
+
+    // Check environment variables first
+    console.log('Environment check:');
+    console.log('- NODE_ENV:', process.env.NODE_ENV);
+    console.log('- MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('- JWT_SECRET exists:', !!process.env.JWT_SECRET);
+
+    if (!process.env.MONGODB_URI) {
+      console.error('CRITICAL: MONGODB_URI environment variable is missing');
+      return NextResponse.json(
+        { error: 'Server configuration error: Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET environment variable is missing');
+      return NextResponse.json(
+        { error: 'Server configuration error: Authentication not configured' },
+        { status: 500 }
+      );
+    }
+
     // Connect to MongoDB
-    console.log('Connecting to MongoDB...');
-    await connectDB();
-    console.log('MongoDB connected successfully for signup');
-    
-    const { email, password, name, phone } = await request.json();
-    console.log('Received signup data:', { email, name, phone: phone ? 'provided' : 'not provided' });
+    console.log('Attempting MongoDB connection...');
+    try {
+      await connectDB();
+      console.log('MongoDB connected successfully for signup');
+    } catch (dbError) {
+      console.error('MongoDB connection failed:', dbError);
+      return NextResponse.json(
+        { error: 'Database connection failed. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
+    // Parse request body
+    let requestBody;
+    try {
+      requestBody = await request.json();
+      console.log('Request body parsed successfully');
+    } catch (parseError) {
+      console.error('Failed to parse request body:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request format. Please check your input.' },
+        { status: 400 }
+      );
+    }
+
+    const { email, password, name, phone } = requestBody;
+    console.log('Extracted data:', { 
+      email: email ? `${email.substring(0, 3)}***` : 'missing',
+      name: name ? 'provided' : 'missing',
+      phone: phone ? 'provided' : 'not provided',
+      passwordLength: password ? password.length : 'missing'
+    });
 
     // Validate input
     if (!email || !password || !name) {
-      console.log('Validation failed:', { email: !!email, password: !!password, name: !!name });
+      console.log('Validation failed:', { 
+        email: !!email, 
+        password: !!password, 
+        name: !!name 
+      });
       return NextResponse.json(
         { error: 'Email, password, and name are required' },
         { status: 400 }
@@ -25,7 +80,18 @@ export async function POST(request: NextRequest) {
 
     // Check if user already exists
     console.log('Checking if user exists...');
-    const existingUser = await User.findOne({ email });
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ email });
+      console.log('User lookup completed');
+    } catch (lookupError) {
+      console.error('User lookup failed:', lookupError);
+      return NextResponse.json(
+        { error: 'Database query failed. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     if (existingUser) {
       console.log('User already exists:', email);
       return NextResponse.json(
@@ -44,28 +110,48 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('Saving user to database...');
-    await user.save();
-    console.log('User saved successfully:', user._id);
+    let savedUser;
+    try {
+      savedUser = await user.save();
+      console.log('User saved successfully:', savedUser._id);
+    } catch (saveError) {
+      console.error('User save failed:', saveError);
+      if (saveError instanceof Error && saveError.message.includes('validation failed')) {
+        return NextResponse.json(
+          { error: 'Invalid data provided. Please check your input.' },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json(
+        { error: 'Failed to create user. Please try again later.' },
+        { status: 500 }
+      );
+    }
 
     // Remove password from response
     const userResponse = {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      phone: user.phone,
-      createdAt: user.createdAt,
+      id: savedUser._id,
+      email: savedUser.email,
+      name: savedUser.name,
+      phone: savedUser.phone,
+      createdAt: savedUser.createdAt,
     };
 
-    console.log('Signup completed successfully');
+    console.log('=== SIGNUP PROCESS COMPLETED SUCCESSFULLY ===');
     return NextResponse.json(
       { message: 'User created successfully', user: userResponse },
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error('Signup error:', error);
+    console.error('=== SIGNUP PROCESS FAILED ===');
+    console.error('Unexpected error:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error constructor:', error?.constructor?.name);
     
-    // Provide more specific error messages
     if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      
       if (error.message.includes('MongoDB')) {
         return NextResponse.json(
           { error: 'Database connection failed. Please try again later.' },
@@ -79,7 +165,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error. Please try again later.' },
       { status: 500 }
