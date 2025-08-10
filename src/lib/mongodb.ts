@@ -1,16 +1,6 @@
 import mongoose from 'mongoose';
 
-// Validate required environment variables
-const requiredEnvVars = ['MONGODB_URI'];
-const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-
-if (missingEnvVars.length > 0) {
-  const errorMessage = `Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your production environment configuration.`;
-  console.error(errorMessage);
-  throw new Error(errorMessage);
-}
-
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 interface Cached {
   conn: typeof mongoose | null;
@@ -28,6 +18,13 @@ if (!global.mongoose) {
 }
 
 async function connectDB() {
+  // Validate required environment variables at runtime
+  if (!MONGODB_URI) {
+    const errorMessage = 'Missing required environment variable: MONGODB_URI. Please check your production environment configuration.';
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
   if (cached.conn) {
     console.log('Using cached MongoDB connection');
     return cached.conn;
