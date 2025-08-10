@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import mongoose from 'mongoose';
 
 export async function GET() {
   try {
@@ -10,6 +9,10 @@ export async function GET() {
     const connection = await connectDB();
     
     // Test if we can perform a simple operation
+    if (!connection.connection.db) {
+      throw new Error('Database connection not established');
+    }
+    
     const adminDb = connection.connection.db.admin();
     const serverInfo = await adminDb.serverInfo();
     

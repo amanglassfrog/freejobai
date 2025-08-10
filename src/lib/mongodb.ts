@@ -36,7 +36,7 @@ async function connectDB() {
   if (!cached.promise) {
     const isProduction = process.env.NODE_ENV === 'production';
     
-    const opts = {
+    const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
       maxPoolSize: isProduction ? 20 : 10,
       serverSelectionTimeoutMS: isProduction ? 10000 : 5000,
@@ -47,8 +47,8 @@ async function connectDB() {
         ssl: true,
         sslValidate: true,
         retryWrites: true,
-        w: 'majority',
-        readPreference: 'primary',
+        w: 'majority' as const,
+        readPreference: 'primary' as const,
         maxIdleTimeMS: 30000,
         minPoolSize: 5,
       }),
