@@ -126,6 +126,7 @@ export class ResumeParser {
         
         // Configure for server-side
         if (typeof window === 'undefined') {
+          // @ts-expect-error - pdfjs-dist types don't properly support server-side configuration
           pdfjsLib.GlobalWorkerOptions.workerSrc = false;
         }
         
@@ -140,7 +141,13 @@ export class ResumeParser {
           const textContent = await page.getTextContent();
           
           const pageText = textContent.items
-            .map((item: any) => item.str)
+            .map((item) => {
+              if ('str' in item) {
+                return item.str;
+              }
+              return '';
+            })
+            .filter(text => text.trim().length > 0)
             .join(' ');
           
           fullText += pageText + '\n';
