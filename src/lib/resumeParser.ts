@@ -97,45 +97,22 @@ export class ResumeParser {
     try {
       console.log('Starting PDF parsing for file:', file.name, 'Size:', file.size);
       
-      // Convert File to ArrayBuffer for pdfjs-dist
+      // Convert File to Buffer for pdf-parse
       const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       
-      console.log('Converted to arrayBuffer, size:', arrayBuffer.byteLength);
+      console.log('Converted to buffer, size:', buffer.length);
       
-      // Dynamic import for pdfjs-dist to avoid server-side issues
-      const pdfjsLib = await import('pdfjs-dist');
+      // Dynamic import for pdf-parse to avoid server-side issues
+      const pdfParse = await import('pdf-parse');
       
-      // Set worker source for server-side rendering
-      if (typeof window === 'undefined') {
-        // Server-side: use a simple worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = false;
-      }
+      // Parse the PDF
+      const data = await pdfParse.default(buffer);
       
-      // Load the PDF document
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
-      
-      console.log('PDF loaded, pages:', pdf.numPages);
-      
-      let fullText = '';
-      
-      // Extract text from each page
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        
-        // Combine text items
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ');
-        
-        fullText += pageText + '\n';
-        console.log(`Page ${pageNum} text length:`, pageText.length);
-      }
-      
-      if (fullText && fullText.trim().length > 0) {
-        console.log('PDF parsed successfully, total extracted text length:', fullText.length);
-        return fullText.trim();
+      if (data.text && data.text.trim().length > 0) {
+        console.log('PDF parsed successfully, extracted text length:', data.text.length);
+        console.log('PDF info - pages:', data.numpages, 'version:', data.info?.PDFFormatVersion);
+        return data.text.trim();
       } else {
         console.warn('No text extracted from PDF or empty content');
         throw new Error('No text content found in PDF. The file might be image-based or corrupted.');
