@@ -36,16 +36,16 @@ async function connectDB() {
   if (!cached.promise) {
     const isProduction = config.isProduction;
     
+    // Simplified connection options that work across MongoDB versions
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
       maxPoolSize: isProduction ? 20 : 10,
       serverSelectionTimeoutMS: isProduction ? 10000 : 5000,
       socketTimeoutMS: isProduction ? 60000 : 45000,
       family: 4, // Force IPv4
-      // Production-specific options
+      
+      // Production-specific options (simplified)
       ...(isProduction && {
-        ssl: config.mongodb.options.ssl,
-        sslValidate: config.mongodb.options.sslValidate,
         retryWrites: true,
         w: 'majority' as const,
         readPreference: 'primary' as const,
@@ -59,9 +59,15 @@ async function connectDB() {
       nodeEnv: process.env.NODE_ENV,
       isProduction,
       opts: {
-        ...opts,
-        // Don't log sensitive production options
-        ...(isProduction && { ssl: '***', sslValidate: '***' })
+        maxPoolSize: opts.maxPoolSize,
+        serverSelectionTimeoutMS: opts.serverSelectionTimeoutMS,
+        socketTimeoutMS: opts.socketTimeoutMS,
+        family: opts.family,
+        retryWrites: opts.retryWrites,
+        w: opts.w,
+        readPreference: opts.readPreference,
+        maxIdleTimeMS: opts.maxIdleTimeMS,
+        minPoolSize: opts.minPoolSize,
       }
     });
 

@@ -11,10 +11,7 @@ export const config = {
   // MongoDB configuration
   mongodb: {
     uri: process.env.MONGODB_URI,
-    options: {
-      ssl: process.env.NODE_ENV === 'production',
-      sslValidate: process.env.NODE_ENV === 'production',
-    }
+    // Removed SSL options that were causing connection issues
   },
   
   // JWT configuration
