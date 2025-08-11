@@ -10,14 +10,29 @@ export function middleware(request: NextRequest) {
 
   // Check if user is authenticated
   const token = request.cookies.get('token')?.value;
+  
+  // Debug logging for production
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Middleware Debug:', {
+      pathname,
+      isPublicRoute,
+      hasToken: !!token,
+      tokenLength: token?.length || 0,
+      cookies: request.cookies.getAll().map(c => ({ name: c.name, value: c.value })),
+      userAgent: request.headers.get('user-agent'),
+      host: request.headers.get('host'),
+    });
+  }
 
   if (!token && !isPublicRoute) {
     // Redirect to signin if trying to access protected route without token
+    console.log('Redirecting to signin - no token found');
     return NextResponse.redirect(new URL('/signin', request.url));
   }
 
   if (token && isPublicRoute && pathname !== '/') {
     // Redirect to dashboard if user is already authenticated and trying to access public routes
+    console.log('Redirecting to dashboard - user already authenticated');
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

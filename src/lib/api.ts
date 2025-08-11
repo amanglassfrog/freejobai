@@ -112,17 +112,17 @@ export const apiClient = new ApiClient();
 
 // Helper functions for common API operations
 export const authApi = {
-  login: (credentials: LoginCredentials): Promise<ApiResponse<UserData>> =>
-    apiClient.post<ApiResponse<UserData>>('/api/auth/login', credentials),
+  login: (credentials: LoginCredentials): Promise<UserData> =>
+    apiClient.post<UserData>('/api/auth/login', credentials),
   
-  signup: (userData: SignupData): Promise<ApiResponse<UserData>> =>
-    apiClient.post<ApiResponse<UserData>>('/api/auth/signup', userData),
+  signup: (userData: SignupData): Promise<UserData> =>
+    apiClient.post<UserData>('/api/auth/signup', userData),
   
-  logout: (): Promise<ApiResponse<{ message: string }>> => 
-    apiClient.post<ApiResponse<{ message: string }>>('/api/auth/logout'),
+  logout: (): Promise<{ message: string }> => 
+    apiClient.post<{ message: string }>('/api/auth/logout'),
   
-  me: (): Promise<ApiResponse<UserData>> => 
-    apiClient.get<ApiResponse<UserData>>('/api/auth/me'),
+  me: (): Promise<UserData> => 
+    apiClient.get<UserData>('/api/auth/me'),
 };
 
 export const resumeApi = {

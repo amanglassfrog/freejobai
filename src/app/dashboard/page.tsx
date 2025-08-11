@@ -1,56 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  createdAt: string;
-}
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData.user);
-        } else {
-          // Redirect to signin if not authenticated
-          router.push('/signin');
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        router.push('/signin');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [router]);
+    if (!loading && !user) {
+      // Redirect to signin if not authenticated
+      router.push('/signin');
+    }
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      router.push('/');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+    await logout();
+    // Redirect is handled by the auth context
   };
 
   if (loading) {
@@ -65,7 +36,13 @@ export default function Dashboard() {
   }
 
   if (!user) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to signin...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -81,7 +58,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                Welcome, {user.name}
+                Welcome, {user?.name || 'User'}
               </span>
               <Button
                 onClick={handleLogout}
@@ -104,7 +81,7 @@ export default function Dashboard() {
               <CardTitle className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gray-800 dark:bg-gray-200 rounded-full flex items-center justify-center">
                   <span className="text-sm font-bold text-white dark:text-gray-800">
-                    {user.name.charAt(0).toUpperCase()}
+                    {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </span>
                 </div>
                 <span>Profile Information</span>
@@ -118,15 +95,15 @@ export default function Dashboard() {
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Full Name
                 </label>
-                <p className="text-gray-900 dark:text-gray-100">{user.name}</p>
+                <p className="text-gray-900 dark:text-gray-100">{user?.name || 'N/A'}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Email
                 </label>
-                <p className="text-gray-900 dark:text-gray-100">{user.email}</p>
+                <p className="text-gray-900 dark:text-gray-100">{user?.email || 'N/A'}</p>
               </div>
-              {user.phone && (
+              {user?.phone && (
                 <div>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Phone Number
@@ -139,7 +116,7 @@ export default function Dashboard() {
                   Member Since
                 </label>
                 <p className="text-gray-900 dark:text-gray-100">
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
             </CardContent>

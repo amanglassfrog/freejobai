@@ -1,56 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import ResumeScanner from "@/components/ResumeScanner";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  createdAt: string;
-}
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ResumeScannerPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData.user);
-        } else {
-          // Redirect to signin if not authenticated
-          router.push('/signin');
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        router.push('/signin');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [router]);
+    if (!loading && !user) {
+      // Redirect to signin if not authenticated
+      router.push('/signin');
+    }
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      router.push('/');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+    await logout();
+    // Redirect is handled by the auth context
   };
 
   if (loading) {
@@ -65,7 +36,13 @@ export default function ResumeScannerPage() {
   }
 
   if (!user) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to signin...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -87,7 +64,7 @@ export default function ResumeScannerPage() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600 dark:text-blue-500">
-                Welcome, {user.name}
+                Welcome, {user?.name || 'User'}
               </span>
               <Button
                 onClick={handleLogout}

@@ -7,12 +7,17 @@ export async function POST() {
       { status: 200 }
     );
 
-    // Clear the JWT token cookie
+    // Clear the JWT token cookie with same settings as login
+    const isProduction = process.env.NODE_ENV === 'production';
+    const domain = isProduction ? '.freejobai.com' : undefined;
+    
     response.cookies.set('token', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 0,
+      secure: isProduction,
+      sameSite: isProduction ? 'lax' : 'strict',
+      maxAge: 0, // Expire immediately
+      path: '/',
+      domain: domain,
     });
 
     return response;

@@ -156,13 +156,23 @@ export async function POST(request: NextRequest) {
 
     // Set JWT token as HTTP-only cookie
     try {
+      const isProduction = process.env.NODE_ENV === 'production';
+      const domain = isProduction ? '.freejobai.com' : undefined; // Allow subdomains
+      
       response.cookies.set('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: isProduction, // Only use HTTPS in production
+        sameSite: isProduction ? 'lax' : 'strict', // More permissive in production
         maxAge: 7 * 24 * 60 * 60, // 7 days
+        path: '/', // Ensure cookie is available across all paths
+        domain: domain, // Set domain for production
       });
-      console.log('JWT cookie set successfully');
+      console.log('JWT cookie set successfully', {
+        secure: isProduction,
+        sameSite: isProduction ? 'lax' : 'strict',
+        domain: domain,
+        path: '/'
+      });
     } catch (cookieError) {
       console.error('Failed to set JWT cookie:', cookieError);
       return NextResponse.json(
