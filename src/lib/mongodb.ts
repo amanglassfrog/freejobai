@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { config } from './config';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = config.mongodb.uri;
 
 interface Cached {
   conn: typeof mongoose | null;
@@ -20,7 +21,9 @@ if (!global.mongoose) {
 async function connectDB() {
   // Validate required environment variables at runtime
   if (!MONGODB_URI) {
-    const errorMessage = 'Missing required environment variable: MONGODB_URI. Please check your production environment configuration.';
+    const errorMessage = `Missing required environment variable: MONGODB_URI. 
+    Environment: ${config.isProduction ? 'Production' : 'Development'}
+    Please check your production environment configuration.`;
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
@@ -31,7 +34,7 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = config.isProduction;
     
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
@@ -41,8 +44,8 @@ async function connectDB() {
       family: 4, // Force IPv4
       // Production-specific options
       ...(isProduction && {
-        ssl: true,
-        sslValidate: true,
+        ssl: config.mongodb.options.ssl,
+        sslValidate: config.mongodb.options.sslValidate,
         retryWrites: true,
         w: 'majority' as const,
         readPreference: 'primary' as const,

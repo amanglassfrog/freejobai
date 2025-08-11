@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { authApi } from '@/lib/api';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -31,19 +32,7 @@ export default function SignUp() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
-      }
+      const data = await authApi.signup(formData);
 
       // Redirect to signin page on successful signup
       router.push('/signin?message=Account created successfully! Please sign in.');
