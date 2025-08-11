@@ -32,7 +32,7 @@ export default function SignUp() {
     setError('');
 
     try {
-      const data = await authApi.signup(formData);
+      await authApi.signup(formData);
 
       // Redirect to signin page on successful signup
       router.push('/signin?message=Account created successfully! Please sign in.');

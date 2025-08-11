@@ -11,9 +11,6 @@ const nextConfig: NextConfig = {
     // Enable compression in production
     compress: true,
     
-    // Optimize bundle size
-    swcMinify: true,
-    
     // Production-specific headers
     async headers() {
       return [
@@ -33,7 +30,9 @@ const nextConfig: NextConfig = {
   // Experimental features
   experimental: {
     // Enable server actions
-    serverActions: true,
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'www.freejobai.com', 'freejobai.com'],
+    },
   },
 };
 

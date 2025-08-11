@@ -1,5 +1,32 @@
 import { getApiUrl } from './config';
 
+// Define response types
+interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  error?: string;
+}
+
+interface UserData {
+  id: string;
+  email: string;
+  name: string;
+  phone?: string;
+  createdAt: string;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+interface SignupData {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
 // API client for making HTTP requests
 export class ApiClient {
   private baseUrl: string;
@@ -9,7 +36,7 @@ export class ApiClient {
   }
 
   // Make a fetch request with proper error handling
-  async request<T = any>(
+  async request<T = unknown>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
@@ -54,12 +81,12 @@ export class ApiClient {
   }
 
   // GET request
-  async get<T = any>(endpoint: string): Promise<T> {
+  async get<T = unknown>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
   // POST request
-  async post<T = any>(endpoint: string, data?: any): Promise<T> {
+  async post<T = unknown>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
@@ -67,7 +94,7 @@ export class ApiClient {
   }
 
   // PUT request
-  async put<T = any>(endpoint: string, data?: any): Promise<T> {
+  async put<T = unknown>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
@@ -75,7 +102,7 @@ export class ApiClient {
   }
 
   // DELETE request
-  async delete<T = any>(endpoint: string): Promise<T> {
+  async delete<T = unknown>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }
@@ -85,20 +112,22 @@ export const apiClient = new ApiClient();
 
 // Helper functions for common API operations
 export const authApi = {
-  login: (credentials: { email: string; password: string }) =>
-    apiClient.post('/api/auth/login', credentials),
+  login: (credentials: LoginCredentials): Promise<ApiResponse<UserData>> =>
+    apiClient.post<ApiResponse<UserData>>('/api/auth/login', credentials),
   
-  signup: (userData: { name: string; email: string; password: string; phone?: string }) =>
-    apiClient.post('/api/auth/signup', userData),
+  signup: (userData: SignupData): Promise<ApiResponse<UserData>> =>
+    apiClient.post<ApiResponse<UserData>>('/api/auth/signup', userData),
   
-  logout: () => apiClient.post('/api/auth/logout'),
+  logout: (): Promise<ApiResponse<{ message: string }>> => 
+    apiClient.post<ApiResponse<{ message: string }>>('/api/auth/logout'),
   
-  me: () => apiClient.get('/api/auth/me'),
+  me: (): Promise<ApiResponse<UserData>> => 
+    apiClient.get<ApiResponse<UserData>>('/api/auth/me'),
 };
 
 export const resumeApi = {
-  parse: (formData: FormData) =>
-    apiClient.post('/api/resume/parse', formData),
+  parse: (formData: FormData): Promise<ApiResponse<unknown>> =>
+    apiClient.post<ApiResponse<unknown>>('/api/resume/parse', formData),
 };
 
 // Export the default client for backward compatibility

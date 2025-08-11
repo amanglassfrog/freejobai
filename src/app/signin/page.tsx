@@ -21,7 +21,7 @@ export default function SignIn() {
     setError('');
 
     try {
-      const data = await authApi.login({ email, password });
+      await authApi.login({ email, password });
 
       // Redirect to dashboard on successful login
       router.push('/dashboard');
