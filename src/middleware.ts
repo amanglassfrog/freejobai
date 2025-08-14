@@ -11,18 +11,7 @@ export function middleware(request: NextRequest) {
   // Check if user is authenticated
   const token = request.cookies.get('token')?.value;
   
-  // Debug logging for production
-  if (process.env.NODE_ENV === 'production') {
-    console.log('Middleware Debug:', {
-      pathname,
-      isPublicRoute,
-      hasToken: !!token,
-      tokenLength: token?.length || 0,
-      cookies: request.cookies.getAll().map(c => ({ name: c.name, value: c.value })),
-      userAgent: request.headers.get('user-agent'),
-      host: request.headers.get('host'),
-    });
-  }
+
 
   if (!token && !isPublicRoute) {
     // Redirect to signin if trying to access protected route without token

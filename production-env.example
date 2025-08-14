@@ -10,6 +10,9 @@ MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/freejobai
 # JWT Configuration
 JWT_SECRET=your-super-secure-jwt-secret-key-here
 
+# OpenAI Configuration
+OPENAI_API_KEY=your-openai-api-key-here
+
 # Environment
 NODE_ENV=production
 

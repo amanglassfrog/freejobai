@@ -31,6 +31,11 @@ export default function Home() {
               <span className="text-xl font-bold text-gray-900">FreeJobAI</span>
             </div>
             <div className="flex items-center space-x-4">
+              <Link href="/ats-analysis">
+                <Button variant="outline" className="border border-gray-900 text-gray-900 hover:bg-gray-50">
+                  ATS Analysis
+                </Button>
+              </Link>
               <Link href="/signin">
                 <Button variant="outline" className="border border-gray-900 text-gray-900 hover:bg-gray-50">
                   Sign In
