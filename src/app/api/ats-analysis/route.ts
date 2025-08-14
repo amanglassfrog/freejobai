@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Only import OpenAI if the API key is configured
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let openai: any = null;
+if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const OpenAI = require('openai');
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  } catch (error) {
+    console.warn('OpenAI package not available:', error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +23,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Resume content is required' }, { status: 400 });
     }
 
-    // Check if OpenAI API key is configured
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key-here') {
+    // Check if OpenAI is properly configured
+    if (!openai) {
       // Return mock analysis when OpenAI is not configured
       return NextResponse.json({
         overallScore: 78,
@@ -194,6 +204,10 @@ Please format your response as a JSON object with the following structure:
 Focus on ${targetRole ? `keywords and skills relevant to ${targetRole}` : 'general ATS optimization principles'}.
 `;
 
+    if (!openai) {
+      throw new Error('OpenAI is not properly configured. Please check your API key and ensure the openai package is installed.');
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
@@ -220,7 +234,7 @@ Focus on ${targetRole ? `keywords and skills relevant to ${targetRole}` : 'gener
     let analysis;
     try {
       analysis = JSON.parse(analysisText);
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse OpenAI response:', analysisText);
       throw new Error('Invalid response format from AI analysis');
     }
@@ -233,12 +247,14 @@ Focus on ${targetRole ? `keywords and skills relevant to ${targetRole}` : 'gener
     // Provide more specific error messages
     let errorMessage = 'Failed to analyze resume';
     if (error instanceof Error) {
-      if (error.message.includes('API key')) {
+      if (error.message.includes('API key') || error.message.includes('not properly configured')) {
         errorMessage = 'OpenAI API key not configured. Please add your OpenAI API key to the environment variables.';
       } else if (error.message.includes('rate limit')) {
         errorMessage = 'OpenAI rate limit exceeded. Please try again later.';
       } else if (error.message.includes('quota')) {
         errorMessage = 'OpenAI quota exceeded. Please check your OpenAI account.';
+      } else if (error.message.includes('package not available')) {
+        errorMessage = 'OpenAI package not available. Please ensure the openai package is installed.';
       } else {
         errorMessage = error.message;
       }

@@ -1,6 +1,36 @@
 'use client';
 
 import { useState } from 'react';
+
+// Type definitions for ATS Analysis
+interface ATSAnalysis {
+  overallScore: number;
+  parseRate: number;
+  keywordScore: number;
+  formatScore: number;
+  originalContent: string;
+  optimizedContent: string;
+  keywordAnalysis: {
+    exactMatches: Array<{ keyword: string; count: number; weight: number }>;
+    synonyms: Array<{ keyword: string; original: string; weight: number }>;
+    relatedTerms: Array<{ keyword: string; relevance: string; weight: number }>;
+    contextRelevance: Array<{ keyword: string; context: string; weight: number }>;
+    densityAnalysis: {
+      overallDensity: number;
+      recommendedDensity: number;
+      status: string;
+      suggestions: string[];
+    };
+    industryAlignment: {
+      score: number;
+      matchedTerms: string[];
+      missingTerms: string[];
+      suggestions: string[];
+    };
+  };
+  recommendations: string[];
+  checks: Array<{ name: string; status: string; score: number }>;
+}
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +56,7 @@ export default function ATSAnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
   const [targetRole, setTargetRole] = useState('');
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<ATSAnalysis | null>(null);
   const [error, setError] = useState<string>('');
   const [showComparison, setShowComparison] = useState(false);
 
@@ -404,7 +434,7 @@ export default function ATSAnalysisPage() {
                              Exact Keyword Matches (100% Weight)
                            </h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                             {analysis.keywordAnalysis.exactMatches.map((match: any, index: number) => (
+                                                           {analysis.keywordAnalysis.exactMatches.map((match, index: number) => (
                                <div key={index} className="flex items-center justify-between p-2 bg-green-50 rounded-md">
                                  <span className="font-medium text-green-800">{match.keyword}</span>
                                  <div className="flex items-center space-x-2">
@@ -425,11 +455,11 @@ export default function ATSAnalysisPage() {
                              Synonyms/Variations (80% Weight)
                            </h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                             {analysis.keywordAnalysis.synonyms.map((synonym: any, index: number) => (
+                                                           {analysis.keywordAnalysis.synonyms.map((synonym, index: number) => (
                                <div key={index} className="flex items-center justify-between p-2 bg-yellow-50 rounded-md">
                                  <div>
                                    <span className="font-medium text-yellow-800">{synonym.keyword}</span>
-                                   <p className="text-xs text-yellow-600">from "{synonym.original}"</p>
+                                                                       <p className="text-xs text-yellow-600">from &quot;{synonym.original}&quot;</p>
                                  </div>
                                  <span className="text-sm text-yellow-600 font-semibold">{synonym.weight}%</span>
                                </div>
@@ -444,7 +474,7 @@ export default function ATSAnalysisPage() {
                              Related Terms (60% Weight)
                            </h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                             {analysis.keywordAnalysis.relatedTerms.map((term: any, index: number) => (
+                                                           {analysis.keywordAnalysis.relatedTerms.map((term, index: number) => (
                                <div key={index} className="flex items-center justify-between p-2 bg-blue-50 rounded-md">
                                  <div>
                                    <span className="font-medium text-blue-800">{term.keyword}</span>
@@ -463,7 +493,7 @@ export default function ATSAnalysisPage() {
                              Context Relevance (20-40% Variable Weight)
                            </h4>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                             {analysis.keywordAnalysis.contextRelevance.map((context: any, index: number) => (
+                                                           {analysis.keywordAnalysis.contextRelevance.map((context, index: number) => (
                                <div key={index} className="flex items-center justify-between p-2 bg-purple-50 rounded-md">
                                  <div>
                                    <span className="font-medium text-purple-800">{context.keyword}</span>
@@ -566,7 +596,7 @@ export default function ATSAnalysisPage() {
                    </CardHeader>
                    <CardContent>
                      <div className="space-y-4">
-                       {analysis.checks.map((check: any, index: number) => (
+                                               {analysis.checks.map((check, index: number) => (
                          <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                            <div className="flex items-center space-x-3">
                              {getStatusIcon(check.status)}
@@ -685,29 +715,29 @@ export default function ATSAnalysisPage() {
                         <div className="mb-4">
                           <span className="font-semibold text-red-600">[Generic Content]</span>
                           <p className="mt-2 text-gray-600 italic">
-                            "Experienced web developer with knowledge of programming languages. 
-                            Worked on various projects and helped improve website performance. 
-                            Good at problem solving and working in teams."
+                                                         &quot;Experienced web developer with knowledge of programming languages. 
+                             Worked on various projects and helped improve website performance. 
+                             Good at problem solving and working in teams.&quot;
                           </p>
                         </div>
                         <div className="mb-4">
                           <span className="font-semibold text-red-600">[Vague Skills]</span>
                           <p className="mt-2 text-gray-600 italic">
-                            "Skills: Programming, Web Development, Problem Solving, Team Work"
+                                                         &quot;Skills: Programming, Web Development, Problem Solving, Team Work&quot;
                           </p>
                         </div>
                         <div className="mb-4">
                           <span className="font-semibold text-red-600">[Generic Experience]</span>
                           <p className="mt-2 text-gray-600 italic">
-                            "Developed websites and applications. Worked with databases. 
-                            Collaborated with team members on various projects."
+                                                         &quot;Developed websites and applications. Worked with databases. 
+                             Collaborated with team members on various projects.&quot;
                           </p>
                         </div>
                         <div>
                           <span className="font-semibold text-red-600">[Missing Details]</span>
                           <p className="mt-2 text-gray-600 italic">
-                            "Education: Computer Science degree<br/>
-                            No certifications or specific achievements mentioned"
+                                                         &quot;Education: Computer Science degree<br/>
+                             No certifications or specific achievements mentioned&quot;
                           </p>
                         </div>
                       </div>
@@ -757,32 +787,32 @@ export default function ATSAnalysisPage() {
                         <div className="mb-4">
                           <span className="font-semibold text-green-600">[Professional Summary]</span>
                           <p className="mt-2">
-                            "Results-driven Software Engineer with 5+ years of experience developing scalable web applications using <span className="bg-green-200 px-1 rounded">React</span>, <span className="bg-green-200 px-1 rounded">Node.js</span>, and <span className="bg-green-200 px-1 rounded">MongoDB</span>. Proven track record of delivering high-quality software solutions that improve user experience and business outcomes."
+                                                         &quot;Results-driven Software Engineer with 5+ years of experience developing scalable web applications using <span className="bg-green-200 px-1 rounded">React</span>, <span className="bg-green-200 px-1 rounded">Node.js</span>, and <span className="bg-green-200 px-1 rounded">MongoDB</span>. Proven track record of delivering high-quality software solutions that improve user experience and business outcomes.&quot;
                           </p>
                         </div>
                         <div className="mb-4">
                           <span className="font-semibold text-green-600">[Technical Skills]</span>
                           <p className="mt-2">
-                            "• Programming Languages: <span className="bg-green-200 px-1 rounded">JavaScript (ES6+)</span>, <span className="bg-green-200 px-1 rounded">TypeScript</span>, Python, Java<br/>
-                            • Frontend: <span className="bg-green-200 px-1 rounded">React.js</span>, <span className="bg-green-200 px-1 rounded">Next.js</span>, HTML5, CSS3, <span className="bg-green-200 px-1 rounded">Tailwind CSS</span><br/>
-                            • Backend: <span className="bg-green-200 px-1 rounded">Node.js</span>, <span className="bg-green-200 px-1 rounded">Express.js</span>, <span className="bg-green-200 px-1 rounded">RESTful APIs</span>, GraphQL<br/>
-                            • Databases: <span className="bg-green-200 px-1 rounded">MongoDB</span>, PostgreSQL, Redis<br/>
-                            • DevOps: <span className="bg-green-200 px-1 rounded">Docker</span>, <span className="bg-green-200 px-1 rounded">AWS</span>, <span className="bg-green-200 px-1 rounded">CI/CD</span>, Git, GitHub Actions"
+                                                         &quot;• Programming Languages: <span className="bg-green-200 px-1 rounded">JavaScript (ES6+)</span>, <span className="bg-green-200 px-1 rounded">TypeScript</span>, Python, Java<br/>
+                             • Frontend: <span className="bg-green-200 px-1 rounded">React.js</span>, <span className="bg-green-200 px-1 rounded">Next.js</span>, HTML5, CSS3, <span className="bg-green-200 px-1 rounded">Tailwind CSS</span><br/>
+                             • Backend: <span className="bg-green-200 px-1 rounded">Node.js</span>, <span className="bg-green-200 px-1 rounded">Express.js</span>, <span className="bg-green-200 px-1 rounded">RESTful APIs</span>, GraphQL<br/>
+                             • Databases: <span className="bg-green-200 px-1 rounded">MongoDB</span>, PostgreSQL, Redis<br/>
+                             • DevOps: <span className="bg-green-200 px-1 rounded">Docker</span>, <span className="bg-green-200 px-1 rounded">AWS</span>, <span className="bg-green-200 px-1 rounded">CI/CD</span>, Git, GitHub Actions&quot;
                           </p>
                         </div>
                         <div className="mb-4">
                           <span className="font-semibold text-green-600">[Quantified Experience]</span>
                           <p className="mt-2">
-                            "• Developed and maintained 5+ React-based web applications, improving user engagement by <span className="bg-green-200 px-1 rounded">40%</span><br/>
-                            • Optimized database queries resulting in <span className="bg-green-200 px-1 rounded">60% faster</span> page load times<br/>
-                            • Implemented CI/CD pipelines using GitHub Actions, reducing deployment time by <span className="bg-green-200 px-1 rounded">70%</span>"
+                                                         &quot;• Developed and maintained 5+ React-based web applications, improving user engagement by <span className="bg-green-200 px-1 rounded">40%</span><br/>
+                             • Optimized database queries resulting in <span className="bg-green-200 px-1 rounded">60% faster</span> page load times<br/>
+                             • Implemented CI/CD pipelines using GitHub Actions, reducing deployment time by <span className="bg-green-200 px-1 rounded">70%</span>&quot;
                           </p>
                         </div>
                         <div>
                           <span className="font-semibold text-green-600">[Certifications]</span>
                           <p className="mt-2">
-                            "• <span className="bg-green-200 px-1 rounded">AWS Certified Developer Associate</span><br/>
-                            • <span className="bg-green-200 px-1 rounded">MongoDB Certified Developer</span>"
+                                                         &quot;• <span className="bg-green-200 px-1 rounded">AWS Certified Developer Associate</span><br/>
+                             • <span className="bg-green-200 px-1 rounded">MongoDB Certified Developer</span>&quot;
                           </p>
                         </div>
                       </div>
@@ -934,7 +964,7 @@ export default function ATSAnalysisPage() {
                         <ul className="space-y-2 text-sm text-gray-600">
                           <li className="flex items-start">
                             <XCircle className="w-3 h-3 text-red-600 mr-2 mt-1 flex-shrink-0" />
-                            Generic "web development" skills
+                            Generic &quot;web development&quot; skills
                           </li>
                           <li className="flex items-start">
                             <XCircle className="w-3 h-3 text-red-600 mr-2 mt-1 flex-shrink-0" />
