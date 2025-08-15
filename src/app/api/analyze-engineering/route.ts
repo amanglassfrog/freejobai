@@ -138,10 +138,11 @@ Be thorough but only include terms that are clearly engineering-related. Avoid g
       });
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Engineering analysis error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Analysis failed: " + error.message },
+      { error: "Analysis failed: " + errorMessage },
       { status: 500 }
     );
   }

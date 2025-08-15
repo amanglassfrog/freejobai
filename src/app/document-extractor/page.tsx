@@ -33,7 +33,17 @@ interface ExtractionResult {
 
 declare global {
   interface Window {
-    pdfjsLib: any;
+    pdfjsLib: {
+      getDocument: (options: { data: ArrayBuffer }) => {
+        promise: Promise<{
+          numPages: number;
+          getPage: (pageNum: number) => Promise<{
+            getTextContent: () => Promise<{ items: Array<{ str: string }> }>;
+          }>;
+        }>;
+      };
+      GlobalWorkerOptions: { workerSrc: string };
+    };
   }
 }
 
@@ -88,8 +98,9 @@ export default function DocumentExtractorPage() {
 
       // Extract text using PDF.js
       await extractTextFromPDF(file);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
       setProgress(0);
@@ -116,7 +127,7 @@ export default function DocumentExtractorPage() {
         const textContent = await page.getTextContent();
 
         let pageText = "";
-        textContent.items.forEach((item: any) => {
+        textContent.items.forEach((item: { str: string }) => {
           pageText += item.str + " ";
         });
 
@@ -130,8 +141,10 @@ export default function DocumentExtractorPage() {
         pdf.numPages
       );
       setResult(processedResult);
-    } catch (error: any) {
-      throw new Error(`Error extracting PDF: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      throw new Error(`Error extracting PDF: ${errorMessage}`);
     }
   };
 
@@ -141,7 +154,7 @@ export default function DocumentExtractorPage() {
     pageCount: number
   ): Promise<ExtractionResult> => {
     // Enhanced text cleaning
-    let cleanedText = text
+    const cleanedText = text
       // Remove page markers
       .replace(/--- Page \d+ ---/g, "")
       // Remove excessive whitespace
@@ -160,9 +173,6 @@ export default function DocumentExtractorPage() {
       .trim();
 
     // Extract structured information
-    const lines = cleanedText
-      .split("\n")
-      .filter((line) => line.trim().length > 0);
     const words = cleanedText.split(/\s+/).filter((word) => word.length > 1);
     const readableWords = words.filter((word) => /^[a-zA-Z]/.test(word));
     const readabilityScore =
@@ -260,9 +270,9 @@ export default function DocumentExtractorPage() {
     let engineeringDisciplines: string[] = [];
     let engineeringKeywords: string[] = [];
     let technicalTerms: string[] = [];
-    let enhancedData: any = {};
+    let enhancedData: Record<string, unknown> = {};
 
-    if (process.env.NEXT_PUBLIC_OPENAI_API_KEY && cleanedText.length > 100) {
+    if (cleanedText.length > 100) {
       try {
         const response = await fetch("/api/analyze-engineering", {
           method: "POST",
@@ -288,7 +298,7 @@ export default function DocumentExtractorPage() {
             analysisSummary: analysis.analysisSummary,
           };
         }
-      } catch (aiError) {
+      } catch (_aiError: unknown) {
         console.log("AI analysis failed, continuing without it");
       }
     }
@@ -406,7 +416,7 @@ export default function DocumentExtractorPage() {
       await navigator.clipboard.writeText(result.extractedText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch (_err: unknown) {
       console.error("Failed to copy text");
     }
   };
