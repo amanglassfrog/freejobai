@@ -1,20 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { 
-  Shield, 
-  TrendingUp, 
-  Target, 
-  Zap, 
-  Users, 
-  BookOpen, 
+import {
+  Shield,
+  TrendingUp,
+  Target,
+  Zap,
+  Users,
+  BookOpen,
   ArrowRight,
   CheckCircle,
   AlertTriangle,
   Lightbulb,
-  Cpu
+  Cpu,
 } from "lucide-react";
 
 export default function Home() {
@@ -32,12 +38,26 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/ats-analysis">
-                <Button variant="outline" className="border border-gray-900 text-gray-900 hover:bg-gray-50">
+                <Button
+                  variant="outline"
+                  className="border border-gray-900 text-gray-900 hover:bg-gray-50"
+                >
                   ATS Analysis
                 </Button>
               </Link>
+              <Link href="/document-extractor">
+                <Button
+                  variant="outline"
+                  className="border border-gray-900 text-gray-900 hover:bg-gray-50"
+                >
+                  Document Extractor
+                </Button>
+              </Link>
               <Link href="/signin">
-                <Button variant="outline" className="border border-gray-900 text-gray-900 hover:bg-gray-50">
+                <Button
+                  variant="outline"
+                  className="border border-gray-900 text-gray-900 hover:bg-gray-50"
+                >
                   Sign In
                 </Button>
               </Link>
@@ -55,7 +75,10 @@ export default function Home() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-8">
-            <Badge variant="secondary" className="mb-4 bg-yellow-100 text-yellow-800 border border-yellow-200">
+            <Badge
+              variant="secondary"
+              className="mb-4 bg-yellow-100 text-yellow-800 border border-yellow-200"
+            >
               <AlertTriangle className="w-4 h-4 mr-2" />
               AI Job Displacement - Your Solution is Here
             </Badge>
@@ -64,22 +87,30 @@ export default function Home() {
               <span className="text-blue-600 block">AI-Powered Insights</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              60%+ of knowledge workers are worried about AI replacing their jobs. 
-              We&apos;re here to help you identify AI-proof skills, plan career transitions, 
-              and build a future-ready resume.
+              60%+ of knowledge workers are worried about AI replacing their
+              jobs. We&apos;re here to help you identify AI-proof skills, plan
+              career transitions, and build a future-ready resume.
             </p>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link href="/signup">
-              <Button size="lg" variant="outline" className="border-2 border-gray-900 text-gray-900 hover:bg-gray-50">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2 border-gray-900 text-gray-900 hover:bg-gray-50"
+              >
                 <Zap className="w-5 h-5 mr-2 text-blue-600" />
                 Start Free Analysis
               </Button>
             </Link>
             <Link href="/dashboard/resume-scanner">
-              <Button size="lg" variant="outline" className="border-2 border-gray-900 text-gray-900 hover:bg-gray-50">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2 border-gray-900 text-gray-900 hover:bg-gray-50"
+              >
                 <Target className="w-5 h-5 mr-2 text-blue-600" />
                 Try Resume Scanner
               </Button>
@@ -98,7 +129,9 @@ export default function Home() {
               <div className="text-4xl font-bold text-gray-900 group-hover:scale-110 transition-transform">
                 <span className="animate-pulse">85</span>%
               </div>
-              <div className="text-gray-600">Average resume score improvement</div>
+              <div className="text-gray-600">
+                Average resume score improvement
+              </div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold text-gray-900 group-hover:scale-110 transition-transform">
@@ -118,7 +151,8 @@ export default function Home() {
               AI Job Displacement Solutions
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Don&apos;t just worry about AI taking your job. Take control of your career with our comprehensive AI-powered tools.
+              Don&apos;t just worry about AI taking your job. Take control of
+              your career with our comprehensive AI-powered tools.
             </p>
           </div>
 
@@ -133,7 +167,8 @@ export default function Home() {
                   AI Skills Assessment Tool
                 </CardTitle>
                 <CardDescription className="text-gray-600">
-                  Identify which of your skills are &quot;AI-proof&quot; and which need upgrading
+                  Identify which of your skills are &quot;AI-proof&quot; and
+                  which need upgrading
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -152,7 +187,10 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="mt-6">
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 border border-blue-200">
+                  <Badge
+                    variant="secondary"
+                    className="bg-blue-100 text-blue-800 border border-blue-200"
+                  >
                     Coming Soon
                   </Badge>
                 </div>
@@ -188,7 +226,10 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="mt-6">
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 border border-blue-200">
+                  <Badge
+                    variant="secondary"
+                    className="bg-blue-100 text-blue-800 border border-blue-200"
+                  >
                     Coming Soon
                   </Badge>
                 </div>
@@ -205,7 +246,8 @@ export default function Home() {
                   Reskilling Pathways
                 </CardTitle>
                 <CardDescription className="text-gray-600">
-                  Personalized learning tracks to make you more valuable alongside AI
+                  Personalized learning tracks to make you more valuable
+                  alongside AI
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -224,7 +266,10 @@ export default function Home() {
                   </li>
                 </ul>
                 <div className="mt-6">
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800 border border-blue-200">
+                  <Badge
+                    variant="secondary"
+                    className="bg-blue-100 text-blue-800 border border-blue-200"
+                  >
                     Coming Soon
                   </Badge>
                 </div>
@@ -259,7 +304,8 @@ export default function Home() {
                   Resume Intelligence Scanner
                 </CardTitle>
                 <CardDescription className="text-gray-600 text-center">
-                  AI-powered resume analysis with comprehensive insights and improvement recommendations
+                  AI-powered resume analysis with comprehensive insights and
+                  improvement recommendations
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -308,7 +354,8 @@ export default function Home() {
                   Stay Updated
                 </CardTitle>
                 <CardDescription className="text-gray-600 text-center">
-                  Be the first to know when our AI job displacement solutions launch
+                  Be the first to know when our AI job displacement solutions
+                  launch
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -331,9 +378,9 @@ export default function Home() {
                     </li>
                   </ul>
                   <div className="space-y-2">
-                    <Input 
-                      type="email" 
-                      placeholder="Enter your email address" 
+                    <Input
+                      type="email"
+                      placeholder="Enter your email address"
                       className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     />
                     <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold">
@@ -355,17 +402,25 @@ export default function Home() {
             Ready to Future-Proof Your Career?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join thousands of professionals who are taking control of their AI future
+            Join thousands of professionals who are taking control of their AI
+            future
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 font-bold">
+              <Button
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-gray-100 font-bold"
+              >
                 <Users className="w-5 h-5 mr-2" />
                 Start Free
               </Button>
             </Link>
             <Link href="/signin">
-              <Button size="lg" variant="outline" className="border-white font-bold text-black hover:bg-white hover:text-blue-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white font-bold text-black hover:bg-white hover:text-blue-600"
+              >
                 Sign In
               </Button>
             </Link>
@@ -385,26 +440,80 @@ export default function Home() {
                 <span className="text-xl font-bold text-white">FreeJobAI</span>
               </div>
               <p className="text-gray-400 max-w-md">
-                Empowering professionals to navigate the AI revolution with confidence. 
-                Future-proof your career with AI-powered insights and tools.
+                Empowering professionals to navigate the AI revolution with
+                confidence. Future-proof your career with AI-powered insights
+                and tools.
               </p>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Product</h3>
               <ul className="space-y-2">
-                <li><Link href="/dashboard/resume-scanner" className="hover:text-white transition-colors">Resume Scanner</Link></li>
-                <li><span className="text-gray-500">AI Skills Assessment (Coming Soon)</span></li>
-                <li><span className="text-gray-500">Career Transition Planner (Coming Soon)</span></li>
-                <li><span className="text-gray-500">Reskilling Pathways (Coming Soon)</span></li>
+                <li>
+                  <Link
+                    href="/dashboard/resume-scanner"
+                    className="hover:text-white transition-colors"
+                  >
+                    Resume Scanner
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/ats-analysis"
+                    className="hover:text-white transition-colors"
+                  >
+                    ATS Analysis
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/document-extractor"
+                    className="hover:text-white transition-colors"
+                  >
+                    Document Extractor
+                  </Link>
+                </li>
+                <li>
+                  <span className="text-gray-500">
+                    AI Skills Assessment (Coming Soon)
+                  </span>
+                </li>
+                <li>
+                  <span className="text-gray-500">
+                    Career Transition Planner (Coming Soon)
+                  </span>
+                </li>
+                <li>
+                  <span className="text-gray-500">
+                    Reskilling Pathways (Coming Soon)
+                  </span>
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="/signin" className="hover:text-white transition-colors">Sign In</Link></li>
-                <li><Link href="/signup" className="hover:text-white transition-colors">Sign Up</Link></li>
-                <li><span className="text-gray-500">About Us</span></li>
-                <li><span className="text-gray-500">Contact</span></li>
+                <li>
+                  <Link
+                    href="/signin"
+                    className="hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/signup"
+                    className="hover:text-white transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </li>
+                <li>
+                  <span className="text-gray-500">About Us</span>
+                </li>
+                <li>
+                  <span className="text-gray-500">Contact</span>
+                </li>
               </ul>
             </div>
           </div>
